@@ -1,0 +1,29 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+    <FilesMatch ".(?:html|php)$">
+    SetHandler application/x-lsphp73
+    </FilesMatch>
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP_HOST} ^hospitallcare\.com$ [OR]
+    RewriteCond %{HTTP_HOST} ^www\.hospitallcare\.com$
+    RewriteRule .* https://www.hospitallcare.com%{REQUEST_URI} [R=301,L]
+    RewriteCond %{HTTPS} =on
+    RewriteCond %{HTTP_HOST} ^hospitallcare\.com$
+    RewriteRule .* https://www.hospitallcare.com%{REQUEST_URI} [R=301,L]
+    # Handle Authorization Header
+    Header add Access-Control-Allow-Origin "*"
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ ../index.php [L]
+</IfModule>
